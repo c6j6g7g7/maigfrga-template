@@ -1,13 +1,27 @@
 """common.py common class and methods for unit testing"""
-import unittest
+from myapp.models.main import PostModel
+from django.conf import settings
+from django.test.client import Client
+import os
+import random
+import string
+from django.test import TestCase
 
 
-class BaseTestCase(unittest.TestCase):
+class BaseTestCase(TestCase):
 
-    def Setup(self):
+    def setUp(self):
+        self.client = Client()
+        self.urls = 'myapp.tests.urls'
+        self.old_TEMPLATE_DIRS = settings.TEMPLATE_DIRS
+        self.old_ROOT_URLCONF = settings.ROOT_URLCONF
+        settings.ROOT_URLCONF = self.urls
+        settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
         super(BaseTestCase, self).setUp()
 
     def tearDown(self):
+        settings.TEMPLATE_DIRS = self.old_TEMPLATE_DIRS
+        settings.ROOT_URLCONF = self.old_ROOT_URLCONF
         super(BaseTestCase, self).tearDown()
 
 
@@ -34,3 +48,35 @@ class raises(object):
                 msg = "{0}() did not raise {1}".format(f.__name__, self.exception.__name__)
                 raise AssertionError(msg)
         return wrapped_f
+
+
+class ModelTestFactory(object):
+    @staticmethod
+    def create_unique_string(prefix='', n_range=6):
+        st = ''.join(random.choice(string.ascii_lowercase + string.digits) for x in range(n_range))
+        if prefix:
+            return '{0}-{1}'.format(prefix, st)
+        else:
+            return '{0}'.format(st)
+
+    @staticmethod
+    def create_unique_email():
+        return '{0}@{1}.com'.format(ModelTestFactory.create_unique_string(), ModelTestFactory.create_unique_string())
+
+    @staticmethod
+    def getPost(**kwargs):
+        if 'status' not in kwargs:
+            kwargs['status'] = PostModel.STATUS.DRAFT
+
+        if 'title' not in kwargs:
+            kwargs['title'] = ModelTestFactory.create_unique_string()
+
+        if 'slug' not in kwargs:
+            kwargs['slug'] = ModelTestFactory.create_unique_string()
+
+        if 'content' not in kwargs:
+            kwargs['content'] = ModelTestFactory.create_unique_string()
+
+        obj = PostModel(**kwargs)
+        obj.save()
+        return obj

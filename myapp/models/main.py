@@ -9,6 +9,11 @@ class ModelError(Exception):
     pass
 
 
+class BaseManager(models.Manager):
+    """common bussiness logic can be implemented here"""
+    pass
+
+
 class BaseModel(models.Model):
     """
     Base model class, contains a simple create datetime , every model extended from this base model
@@ -16,6 +21,7 @@ class BaseModel(models.Model):
     Another fields as update_datetime, user_id can be added
     """
     create_datetime = models.DateTimeField(default=datetime.datetime.utcnow().replace(tzinfo=utc))
+    objects = BaseManager()
 
     @classmethod
     def enum(cls, **enums):
@@ -41,9 +47,20 @@ class PostModel(BaseModel):
     STATUS = BaseModel.enum(DRAFT=1, PUBLISHED=2, DELETED=3)
     #maybe a title with more than 80 caracters will not be easy to share in twitter
     title = models.CharField(max_length=80, blank=False, null=False, default=None)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     content = models.TextField()
     status = models.IntegerField()
+
+    @classmethod
+    def get_list(cls,**kwargs):
+        return PostModel.objects.filter(**kwargs)
+
+    @classmethod
+    def slug_exists(cls, slug=''):
+        try:
+            return bool(PostModel.objects.get(slug=slug))
+        except PostModel.DoesNotExist:
+            return False
 
     def _check_status(self):
         if self.status in (self.STATUS.DRAFT, self.STATUS.PUBLISHED, self.STATUS.DELETED):
@@ -53,7 +70,7 @@ class PostModel(BaseModel):
 
     def save(self, *args, **kwargs):
         if self._check_status():
-            super(Post, self).save(*args, **kwargs)
+            super(PostModel, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'myapp'

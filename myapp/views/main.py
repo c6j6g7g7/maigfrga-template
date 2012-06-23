@@ -81,7 +81,7 @@ class BaseView(View):
     def delete(self, *args, **kwargs):
         return self.delete(*args, **kwargs)
 
-    def template_response(self, request, template_name='base.html', context={}):
+    def template_response(self, request, template_name='index.html', context={}):
         t = loader.get_template(template_name)
         c = RequestContext(request, context)
         return http.HttpResponse(t.render(c))
@@ -94,16 +94,10 @@ class BaseView(View):
         return http.HttpResponse(content, mimetype='application/json')
 
 
-
-
 class IndexView(BaseView):
     """
     A very simple basic view
     """
     def get(self, request, *args, **kwargs):
-        if 'id' in kwargs:
-            return self.edit(request,*args,**kwargs)
-        else:
-            return self.list(request,*args,**kwargs)
         context = {}
-        return self.template_to_response(context=context)
+        return self.template_response(request, context=context)

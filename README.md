@@ -15,9 +15,10 @@ Usage
 
 1. Clone this project.
 2. Change the name of myapp directory to the name of your app.
-3. Edit your settings.py and add a reference in your INSTALLED_APPS `<https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps>_` .
+3. Edit your settings.py and add a reference in your INSTALLED_APPS https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps .
 4. Edit models/main.py and set the app_label on class meta in BaseModel, ajust to the name of your app. Every model created must implement the Meta
    class and set the app_label option.
+
 Content
 -------
 * **myapp/models/main.py** The base models for your app, you can add new models, even new models files, all you have to do is import all of them in the myapp/__init.__py.
@@ -26,6 +27,6 @@ Content
 
 Resources
 ---------
-* `Testing Django applications <https://docs.djangoproject.com/en/dev/topics/testing/>_`
-* `Test-Driven Django Tutorial <http://www.tdd-django-tutorial.com/tutorial/1/>_`
-* `Meta inheritance <https://docs.djangoproject.com/en/dev/topics/db/models/#meta-inheritance>_`
+* Testing Django applications https://docs.djangoproject.com/en/dev/topics/testing/
+* Test-Driven Django Tutorial http://www.tdd-django-tutorial.com/tutorial/1/
+* Meta inheritance https://docs.djangoproject.com/en/dev/topics/db/models/#meta-inheritance
