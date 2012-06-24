@@ -1,11 +1,12 @@
 """common.py common class and methods for unit testing"""
 from myapp.models.main import PostModel
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.test import TestCase
 from django.test.client import Client
 import os
 import random
 import string
-from django.test import TestCase
 
 
 class BaseTestCase(TestCase):
@@ -62,6 +63,27 @@ class ModelTestFactory(object):
     @staticmethod
     def create_unique_email():
         return '{0}@{1}.com'.format(ModelTestFactory.create_unique_string(), ModelTestFactory.create_unique_string())
+
+    @staticmethod
+    def getUser(**kwargs):
+        if 'is_active' in kwargs:
+            is_active = kwargs['is_active']
+        else:
+            is_active = False
+
+        if 'password' in kwargs:
+            password = kwargs['password']
+            del kwargs['password']
+        else:
+            password = 'password'
+
+        email = ModelTestFactory.create_unique_email()
+        default = {'email': email, 'username': email.split('@')[0]}
+        default.update(kwargs)
+        obj = User(**default)
+        obj.set_password(password)
+        obj.save()
+        return obj
 
     @staticmethod
     def getPost(**kwargs):

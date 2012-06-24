@@ -49,10 +49,10 @@ class PostModel(BaseModel):
     title = models.CharField(max_length=80, blank=False, null=False, default=None)
     slug = models.SlugField(unique=True)
     content = models.TextField()
-    status = models.IntegerField()
+    status = models.IntegerField(default=STATUS.DRAFT)
 
     @classmethod
-    def get_list(cls,**kwargs):
+    def get_list(cls, **kwargs):
         return PostModel.objects.filter(**kwargs)
 
     @classmethod
