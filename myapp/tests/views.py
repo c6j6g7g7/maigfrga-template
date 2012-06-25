@@ -37,8 +37,8 @@ class ViewTestCase(BaseTestCase):
         post_edit = reverse('post')
         self.client.login(username=user.username, password='test')
         self.assertEquals(0, PostModel.objects.all().count())
-        #response = self.client.post(post_edit,{})
-        #self.assertContains(response,'This field is required')
+        response = self.client.post(post_edit,{})
+        self.assertContains(response,'This field is required')
         content = ModelTestFactory.create_unique_string()
         response = self.client.post(post_edit,{'title': ModelTestFactory.create_unique_string(),
                                                'slug': ModelTestFactory.create_unique_string(),
@@ -58,7 +58,6 @@ class ViewTestCase(BaseTestCase):
         response = self.client.put(post_edit,{ 'title': post.title,
                                                'slug': post.slug,
                                                'content': new_content})
-        #print response
-        #self.assertContains(response, new_content)
+        self.assertContains(response, new_content)
         post_updated = PostModel.objects.get(id=post.id)
-        #self.assertNotEquals(post.content, post_updated.content)
+        self.assertNotEquals(post.content, post_updated.content)

@@ -3,12 +3,12 @@ django-myapp-template
 
 Django custom structure for a django app
 
-Minimun Django version supported **1.4**.
+Django version supported **1.4**.
 
 Requirements
 ------------
 
-* Django >= 1.4
+* Django 1.4
 
 Usage
 -----
@@ -23,10 +23,17 @@ Content
 -------
 * **myapp/models/main.py** The base models for your app, you can add new models, even new models files, all you have to do is import all of them in the myapp/__init.__py.
 * **myapp/models/__init.py** The models imported
+* **myapp/forms/main.py**  example form
 * **myapp/test/models.py** Unit test for models
+* **myapp/test/views.py** Unit test for views
+* **myapp/test/common** Base Test Case and model Factory
 
 Resources
 ---------
 * Testing Django applications https://docs.djangoproject.com/en/dev/topics/testing/
 * Test-Driven Django Tutorial http://www.tdd-django-tutorial.com/tutorial/1/
 * Meta inheritance https://docs.djangoproject.com/en/dev/topics/db/models/#meta-inheritance
+
+Notes
+-----
+Seems that put request do not work on development version 1.5

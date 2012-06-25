@@ -1,6 +1,5 @@
 """main.py Base models for your application"""
 from django.db import models
-from django.utils.timezone import utc
 
 import datetime
 
@@ -20,7 +19,7 @@ class BaseModel(models.Model):
     will have this field with the creation current time by default.
     Another fields as update_datetime, user_id can be added
     """
-    create_datetime = models.DateTimeField(default=datetime.datetime.utcnow().replace(tzinfo=utc))
+    create_datetime = models.DateTimeField(default=datetime.datetime.now())
     objects = BaseManager()
 
     @classmethod

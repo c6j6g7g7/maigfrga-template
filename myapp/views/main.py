@@ -1,16 +1,14 @@
 """main.py Main views for your app"""
 from django import http
-from django.core.serializers import serialize
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.db.models.query import QuerySet
 from django.template import RequestContext, loader
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.log import getLogger
 from django.views.generic import View
 
-from myapp.models.main import PostModel,BaseModel
+from myapp.models.main import PostModel
 from myapp.forms.main import PostForm
 
 logger = getLogger('django.request')
@@ -109,9 +107,10 @@ class IndexView(BaseView):
         context = {}
         return self.template_response(request, context=context)
 
+
 class PostView(BaseView):
     @method_decorator(login_required)
-    def dispatch(self,*args, **kwargs):
+    def dispatch(self, *args, **kwargs):
         return super(PostView, self).dispatch(*args, **kwargs)
 
     def get(self, *args, **kwargs):
@@ -128,14 +127,14 @@ class PostView(BaseView):
         return self.remove(*args, **kwargs)
 
     def object_list(self, *args, **kwargs):
-        request= args[0]
+        request = args[0]
         object_list = PostModel.get_list()
         context = {'object_list': object_list}
         return self.template_response(request, template_name='post/list.html', context=context)
 
     def edit(self, *args, **kwargs):
-        request= args[0]
-        context={}
+        request = args[0]
+        context = {}
         try:
             context['obj'] = PostModel.objects.get(id=kwargs.get('id'))
             context['form'] = PostForm(initial={'title': context['obj'].title,
@@ -147,41 +146,40 @@ class PostView(BaseView):
         return self.template_response(request, template_name='post/edit.html', context=context)
 
     def create(self, *args, **kwargs):
-        request= args[0]
+        request = args[0]
         if request.method != "POST":
             return http.HttpResponseRedirect(reverse('post'))
         form = PostForm(data=request.POST)
         if form.is_valid():
             obj = form.save()
-            obj_dict={'id': obj.id, 'slug': obj.slug, 'title': obj.title, 'content': obj.content, 'create_datetime': str(obj.create_datetime)}
+            obj_dict = {'id': obj.id, 'slug': obj.slug, 'title': obj.title, 'content': obj.content, 'create_datetime': str(obj.create_datetime)}
             return self.json_to_response(obj=obj_dict)
         else:
-            return self.json_to_response(obj={'errors':form.errors})
+            return self.json_to_response(obj={'errors': form.errors})
 
     def update(self, *args, **kwargs):
-        request= args[0]
+        request = args[0]
         if request.method != "PUT":
             return http.HttpResponseRedirect(reverse('post'))
         try:
             obj = PostModel.objects.get(pk=kwargs.get('id'))
-            form = PostForm( request.PUT )
+            form = PostForm(request.PUT)
             if form.is_valid():
                 obj = form.save(obj_post=obj)
-                obj_dict={'id': obj.id, 'slug': obj.slug, 'title': obj.title, 'content': obj.content, 'create_datetime': str(obj.create_datetime)}
+                obj_dict = {'id': obj.id, 'slug': obj.slug, 'title': obj.title, 'content': obj.content, 'create_datetime': str(obj.create_datetime)}
                 return self.json_to_response(obj=obj_dict)
             else:
-                return self.json_to_response(obj={'errors':form.errors})
+                return self.json_to_response(obj={'errors': form.errors})
         except PostModel.DoesNotExist:
             return self.json_to_response(obj={'errors': 'can not update'})
 
     def remove(self, *args, **kwargs):
-        request= args[0]
+        request = args[0]
         if request.method != 'DELETE' or not 'id' in kwargs:
-            return self.json_to_response(obj={'error':'can not delete post'})
+            return self.json_to_response(obj={'error': 'can not delete post'})
         try:
             obj = PostModel.objects.get(id=kwargs.get('id'))
             obj.delete()
-            return self.json_to_response(obj={'ok':'post deleted'})
+            return self.json_to_response(obj={'ok': 'post deleted'})
         except:
-            return self.json_to_response(obj={'error':'can not delete post'})
-
+            return self.json_to_response(obj={'error': 'can not delete post'})
