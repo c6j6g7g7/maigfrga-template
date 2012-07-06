@@ -10,6 +10,10 @@ Requirements
 
 * Django 1.4
 
+Release History
+---------------
+* **Tag 1.0** Basic models , initial unit test
+
 Usage
 -----
 
