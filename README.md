@@ -37,7 +37,7 @@ Resources
 * Testing Django applications https://docs.djangoproject.com/en/dev/topics/testing/
 * Test-Driven Django Tutorial http://www.tdd-django-tutorial.com/tutorial/1/
 * Meta inheritance https://docs.djangoproject.com/en/dev/topics/db/models/#meta-inheritance
-
+* A successful Git branching model http://nvie.com/posts/a-successful-git-branching-model/
 Notes
 -----
 Seems that put request do not work on development version 1.5
