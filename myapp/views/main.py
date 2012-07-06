@@ -94,7 +94,7 @@ class BaseView(View):
         try:
             content = simplejson.dumps(obj)
         except Exception as a:
-            print a
+            print(a)
             content = {}
         return http.HttpResponse(content, mimetype='application/json')
 
