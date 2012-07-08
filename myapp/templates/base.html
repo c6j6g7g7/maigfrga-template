@@ -11,22 +11,29 @@
 
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href=".{{ STATIC_URL }}css/bootstrap.css" >
+  <link rel="stylesheet" href=".{{ STATIC_URL }}css/style.css" >
+
   <script src="{{ STATIC_URL }}js/libs/modernizr-2.5.3.min.js"></script>
 </head>
 <body>
   <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
-  <header>
-{% block header %}
-{%  endblock %}
-  </header>
-  <div role="main" class="container">
-{% block main %}
-{% endblock %}
-  </div>
-  <footer>
-{% block footer%}
-{% endblock%}
-  </footer>
+    <div class="navbar navbar-fixed-top">
+        <header >
+            {% block header %}
+            {%  endblock %}
+        </header>
+    </div>
+
+    <div role="main" class="">
+        <div class="container">
+            {% block main %}
+            {% endblock %}
+        </div>
+    </div>
+    <footer>
+        {% block footer%}
+        {% endblock%}
+    </footer>
 
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>

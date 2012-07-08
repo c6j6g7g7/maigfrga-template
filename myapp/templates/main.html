@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load i18n %}
+{% load url from future %}
 {% block header %}
 {{block.super}}
 <div class="navbar navbar-fixed-top">
@@ -20,4 +22,22 @@
         </div>
       </div>
     </div>
+{% endblock %}
+{% block main %}
+    {{block.super}}
+    <form class="well" method="post" action="{% url 'django.contrib.auth.views.login' %}" >
+    {% csrf_token %}
+    <ul>
+        <li>
+            <label for="id_username">{% trans "username" %}</label>
+            {{form.username}}
+        </li>
+        <li>
+            <label for="id_password">{% trans "password"%}</label>
+            {{form.password}}
+        </li>
+
+    </ul>
+    <button type="submit" class="btn btn-primary">{% trans "login" %}</button>
+    </form>
 {% endblock %}

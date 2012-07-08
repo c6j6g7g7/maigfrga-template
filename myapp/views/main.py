@@ -2,6 +2,7 @@
 from django import http
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
 from django.template import RequestContext, loader
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
@@ -104,7 +105,7 @@ class IndexView(BaseView):
     A very simple basic view
     """
     def get(self, request, *args, **kwargs):
-        context = {}
+        context = {'form': AuthenticationForm()}
         return self.template_response(request, context=context)
 
 
