@@ -3,41 +3,31 @@
 {% load url from future %}
 {% block header %}
 {{block.super}}
-<div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a href="#" class="brand">maigfrga's django template</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+                <a href="#" class="brand">maigfrga's django template</a>
         </div>
-      </div>
-    </div>
+    </nav>
 {% endblock %}
 {% block main %}
     {{block.super}}
-    <form class="well" method="post" action="{% url 'django.contrib.auth.views.login' %}" >
-    {% csrf_token %}
-    <ul>
-        <li>
-            <label for="id_username">{% trans "username" %}</label>
-            {{form.username}}
-        </li>
-        <li>
-            <label for="id_password">{% trans "password"%}</label>
-            {{form.password}}
-        </li>
+    <div class="row">
+        <div class="span5 offset4">
+            <form class="span4 well" method="post" action="{% url 'django.contrib.auth.views.login' %}" >
+            {% csrf_token %}
+            <ul>
+                <li>
+                    <label for="id_username">{% trans "username" %}</label>
+                    {{form.username}}
+                </li>
+                <li>
+                    <label for="id_password">{% trans "password"%}</label>
+                    {{form.password}}
+                </li>
 
-    </ul>
-    <button type="submit" class="btn btn-primary">{% trans "login" %}</button>
-    </form>
+            </ul>
+            <input type="submit" class="btn btn-success btn-large span2" value="{% trans "login" %}"></input>
+            </form>
+        </div>
+    </div>
 {% endblock %}

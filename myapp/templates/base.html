@@ -17,19 +17,18 @@
 </head>
 <body>
   <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
-    <div class="navbar navbar-fixed-top">
-        <header >
+
+    <header>
+        <div class="container"> 
             {% block header %}
             {%  endblock %}
-        </header>
-    </div>
-
-    <div role="main" class="">
-        <div class="container">
-            {% block main %}
-            {% endblock %}
         </div>
-    </div>
+    </header>
+
+    <article class="container">
+        {% block main %}
+        {% endblock %}
+    </article>
     <footer>
         {% block footer%}
         {% endblock%}
