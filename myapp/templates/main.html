@@ -12,8 +12,8 @@
 {% block main %}
     {{block.super}}
     <div class="row">
-        <div class="span5 offset4">
-            <form class="span4 well" method="post" action="{% url 'django.contrib.auth.views.login' %}" >
+        <div id="login-container" class="span5 offset4">
+            <form class="span4 well" method="post" action="{% url 'login' %}" >
             {% csrf_token %}
             <ul>
                 <li>

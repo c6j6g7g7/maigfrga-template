@@ -1,6 +1,7 @@
 """main.py Main views for your app"""
 from django import http
 from django.core.urlresolvers import reverse
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.template import RequestContext, loader
@@ -51,6 +52,14 @@ class BaseView(View):
         following REST philosophy post can be used in order to create new resources
         http://en.wikipedia.org/wiki/Representational_state_transfer
         """
+        if 'action' in kwargs:
+            """
+            if action param is defined un urls.py the view will call a method with this param name
+            otherwise update method will called by default
+            """
+            func = getattr(self, kwargs.get('action'))
+            return func(*args, **kwargs)
+
         return self.create(*args, **kwargs)
 
     def put(self, *args, **kwargs):
@@ -72,7 +81,6 @@ class BaseView(View):
             request._load_post_and_files()
             request.META['REQUEST_METHOD'] = 'PUT'
         request.PUT = request.POST
-        '''
         if 'action' in kwargs:
             """
             if action param is defined un urls.py the view will call a method with this param name
@@ -80,7 +88,6 @@ class BaseView(View):
             """
             func = getattr(self, kwargs.get('action'))
             return func(*args, **kwargs)
-        '''
         return self.update(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -90,6 +97,9 @@ class BaseView(View):
         t = loader.get_template(template_name)
         c = RequestContext(request, context)
         return http.HttpResponse(t.render(c))
+
+    def invalid_request(self, request):
+        return http.HttpResponseBadRequest()
 
     def json_to_response(self, obj={}):
         try:
@@ -107,6 +117,30 @@ class IndexView(BaseView):
     def get(self, request, *args, **kwargs):
         context = {'form': AuthenticationForm()}
         return self.template_response(request, context=context)
+
+    def create(self, request, *args, **kwargs):
+        return self.invalid_request(request)
+
+    def login(self, request, *args, **kwargs):
+        """
+        original login implementation can be views here:
+        https://github.com/django/django/blob/stable/1.4.x/django/contrib/auth/views.py
+        """
+        if request.method != "POST":
+            return self.json_to_response(obj={'error': 'invalid request'})
+        else:
+            form = AuthenticationForm(data=request.POST)
+            if form.is_valid():
+                url_post_list = reverse('post')
+                auth_login(request, form.get_user())
+
+                if request.session.test_cookie_worked():
+                    request.session.delete_test_cookie()
+
+                return self.json_to_response(obj={'ok': url_post_list})
+            else:
+               return self.json_to_response(obj={'error': form.errors})
+
 
 
 class PostView(BaseView):

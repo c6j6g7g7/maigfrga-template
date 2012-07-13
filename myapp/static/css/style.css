@@ -1,4 +1,3 @@
 header {height: 40px;}
-/*.float{left:float!important;}
-
-form.form ul{float:left;}*/
+form ul{float:left; list-style:none;width:100%;}
+form ul li{float:left;width:100%;}

@@ -10,6 +10,23 @@ class ViewTestCase(BaseTestCase):
         self.assertEquals(200, response.status_code)
         self.assertContains(response, 'import life')
 
+    def test_login(self):
+        #first send an empty post and check by faluire
+        url = reverse('login')
+        response = self.client.post(url)
+        self.assertContains(response,'{"error": {"username": ["This field is required."], "password": ["This field is required."]}}')
+
+        #check by an inexsisten username
+        post_params = {'username': 'fake@fake.com', 'password': '123'}
+        response = self.client.post(url, post_params)
+        self.assertContains(response, 'Please enter a correct username and password')
+        user = ModelTestFactory.getUser(password='test')
+        post_params = {'username': user.username, 'password': 'test'}
+
+        response = self.client.post(url, post_params)
+        self.assertContains(response, 'ok')
+
+
     def test_list_post(self):
         user = ModelTestFactory.getUser(password='test')
         post_list = reverse('post')
