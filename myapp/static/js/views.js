@@ -1,6 +1,12 @@
  LoginView = Backbone.View.extend({
                 initialize: function(){
-                    alert("Alerts suck.");
+                    console.log('view');
+                },
+                events: {
+                    "click #loginBtn": "login"
+                },
+                login: function(e){
+                    console.log('peguelo niño');
+                    e.preventDefault();
                 }
              });
-var login_view = new LoginView({ el: $("#login-container") });

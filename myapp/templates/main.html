@@ -26,8 +26,17 @@
                 </li>
 
             </ul>
-            <input type="submit" class="btn btn-success btn-large span2" value="{% trans "login" %}"></input>
+            <input type="submit" id="loginBtn" class="btn btn-success btn-large span2" value="{% trans "login" %}"></input>
             </form>
         </div>
     </div>
+{% endblock %}
+{% block page_script %}
+    {{block.super}}
+    <script>
+    $(function() {
+        var user = new User;
+        var login_view = new LoginView({ el: $("#login-container") });
+    });
+    </script>
 {% endblock %}
