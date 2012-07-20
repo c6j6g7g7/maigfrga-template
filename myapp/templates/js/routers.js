@@ -15,3 +15,6 @@ var AppRouter = Backbone.Router.extend({
     var app_router = new AppRouter;
     // Start Backbone history a neccesary step for bookmarkable URL's
     Backbone.history.start();
+
+    window.loginModel = new UserLogin;
+    new LoginView({model: loginModel});
