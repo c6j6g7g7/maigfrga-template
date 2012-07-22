@@ -1,8 +1,8 @@
 {% load url from future %}
-
+{% load i18n %}
 var AppRouter = Backbone.Router.extend({
         routes: {
-            "{% url 'login' %}": "login",
+            "{% url 'login_nt' %}": "login",
             "*actions": "defaultRoute" // Backbone will try match the route above first
         },
         getPost: function( id ) {
@@ -16,5 +16,4 @@ var AppRouter = Backbone.Router.extend({
     // Start Backbone history a neccesary step for bookmarkable URL's
     Backbone.history.start();
 
-    window.loginModel = new UserLogin;
-    new LoginView({model: loginModel});
+//    new LoginView();

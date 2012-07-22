@@ -11,32 +11,49 @@
 {% endblock %}
 {% block main %}
     {{block.super}}
-    <div class="row">
-        <div id="login-container" class="span5 offset4">
-            <form class="span4 well" method="post" action="{% url 'login' %}" >
+        <div id="login-container" class="span4 offset3">
+            <form class="span4 well" method="post" action="{% url 'login_nt' %}" >
             {% csrf_token %}
-            <ul>
-                <li>
-                    <label for="id_username">{% trans "username" %}</label>
-                    {{form.username}}
+            <ul class="span3">
+                <li class="username control-group">
+                    <label class="control-label" for="id_username">{% trans "username" %}</label>
+                    <div class="controls">
+                        {{form.username}}
+                    </div>
                 </li>
-                <li>
-                    <label for="id_password">{% trans "password"%}</label>
-                    {{form.password}}
+                <li class="password control-group">
+                    <label class="control-label" for="id_password">{% trans "password"%}</label>
+                    <div class="controls">
+                        {{form.password}}
+                    </div>
                 </li>
 
             </ul>
-            <input type="submit" id="loginBtn" class="btn btn-success btn-large span2" value="{% trans "login" %}"></input>
+            <div class="offset1">
+                <input type="submit" id="loginBtn" class="btn btn-success btn-large span2" value="{% trans "login" %}"></input>
+            </div>
             </form>
         </div>
-    </div>
 {% endblock %}
 {% block page_script %}
     {{block.super}}
     <script>
     $(function() {
-        var user = new User;
-        var login_view = new LoginView({ el: $("#login-container") });
+        //custom validation rules
+        var validation = {
+                username: {
+                    required: true,
+                    {% comment%}
+                     A common problem in django development is deal with javascritp internationization, one approach can use
+                     a javascritp translation catalog https://docs.djangoproject.com/en/1.0/topics/i18n/#using-the-javascript-translation-catalog
+                     another approach can build the javascritp object  inside django template
+                    {% endcomment%}
+                    msg: '{%trans "Please enter your username, it is really important" %}'
+                }
+            };
+
+        var loginModel = new UserLogin();
+        var login_view = new LoginView({ model:loginModel, el: $("#login-container") });
     });
     </script>
 {% endblock %}

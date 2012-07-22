@@ -63,6 +63,7 @@ class BaseView(View):
         return self.create(*args, **kwargs)
 
     def put(self, *args, **kwargs):
+
         """
         Django does not support PUT this piece of code is from django piston in order to support PUT
         https://bitbucket.org/jespern/django-piston/src/c4b2d21db51a/piston/utils.py
@@ -101,6 +102,10 @@ class BaseView(View):
     def invalid_request(self, request):
         return http.HttpResponseBadRequest()
 
+    def from_json_request(self, value):
+        print value.keys()
+        return simplejson.loads(str(value))
+
     def json_to_response(self, obj={}):
         try:
             content = simplejson.dumps(obj)
@@ -126,6 +131,10 @@ class IndexView(BaseView):
         original login implementation can be views here:
         https://github.com/django/django/blob/stable/1.4.x/django/contrib/auth/views.py
         """
+        post_dict = {}
+        print request.POST
+        #post_dict = request.POST.get('model')
+        #print post_dict
         if request.method != "POST":
             return self.json_to_response(obj={'error': 'invalid request'})
         else:
