@@ -1,5 +1,5 @@
 var UserLogin = Backbone.Model.extend({
-    url : '/login/',
+    url: '/login/',
     initialize: function(options){
         //check if validation rules has been seeted in constuction time
         if(options == undefined) options = {};
@@ -13,7 +13,7 @@ var UserLogin = Backbone.Model.extend({
             }
     },
 
-    /*validation : {
+    validation: {
 
         username: {
             required: true,
@@ -23,5 +23,5 @@ var UserLogin = Backbone.Model.extend({
             required: true,
             msg: 'Please enter your password'
         }
-    }*/
+    }
 });

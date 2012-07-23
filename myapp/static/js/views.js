@@ -45,22 +45,25 @@ var  LoginView = Backbone.View.extend({
                         var params = {'errors': this.model.validate()};
                         this.render(params);
                     }else{
-                        var success = function(response){
+                        var success = function(response, b){
+                            
                             console.log('not error');
                             console.log(response);
+                            console.log(b);
                          };
                         var error = function(response){
                             console.log('error');
                                 console.log(response);
                             };
-                         console.log(this.model.toJSON());
+                         /*
                          var data={};
                          data.parameters = this.model.toJSON();
                          data.error_func = error;
                          data.success_func = success;
                          data.url = this.model.url;
-                         notempo.utils.do_post(data);
-                        //this.model.save({error: error, success: success});
+                         notempo.utils.do_post(data);*/
+                         this.model.save({success:success});
+                        //console.log(this.model.validate());
                     }
                 }
              });
