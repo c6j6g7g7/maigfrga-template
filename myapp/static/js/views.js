@@ -12,6 +12,7 @@ var  LoginView = Backbone.View.extend({
                         this.model = new UserLogin;
                     }
                 },
+
                 events: {
                    "click #loginBtn": "login"
                 },
@@ -20,50 +21,38 @@ var  LoginView = Backbone.View.extend({
                     if (params == undefined) params = {};
                     if(params.errors != undefined ){
                         //If param.errors is definided, a validation error has happen and has to be rendered
-                        var show_errors = function(value, field){
-                                var template = _.template('<div class="alert  alert-error"> <strong>oops!</strong>  <%= error %></div>');
-
-                                var control_group = this.$('li.'+field);
-                                control_group.addClass('error');
-                                control_group.find('div.controls').append(template({'error': value}));
-
-                            };
-                        _.each(params.errors, show_errors);
+                        notempo.utils.show_errors(this.$el, params);
                         }
                     return this;
                 },
 
                 login: function(e){
-                    //Backbone.emulateJSON = true;
-
                     e.preventDefault();
+                    //set the input values to the model and perform validation
                     this.model.set({'username': this.$("#id_username").val(),
                                     'password': this.$("#id_password").val()
                                     });
                     Backbone.Validation.bind(this);
+
                     if (!this.model.isValid(['username', 'password'])){
                         var params = {'errors': this.model.validate()};
                         this.render(params);
-                    }else{
-                        var success = function(response, b){
-                            
-                            console.log('not error');
-                            console.log(response);
-                            console.log(b);
+                    }
+                    else{
+                        //success function tha executes after response has delivered from server
+                        var current_view = this;
+                        var success = function(model, response){
+                            if(response.errors != undefined){
+                                var params = {'errors': response.errors};
+                                current_view.render(params);
+                            }else{
+                                if(response.ok != undefined){
+                                        window.location.replace(response.ok.url);
+                                    }
+                            }
                          };
-                        var error = function(response){
-                            console.log('error');
-                                console.log(response);
-                            };
-                         /*
-                         var data={};
-                         data.parameters = this.model.toJSON();
-                         data.error_func = error;
-                         data.success_func = success;
-                         data.url = this.model.url;
-                         notempo.utils.do_post(data);*/
-                         this.model.save({success:success});
-                        //console.log(this.model.validate());
+
+                         this.model.save({},{success: success});
                     }
                 }
              });

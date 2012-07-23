@@ -1,0 +1,43 @@
+{% extends "main.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block main %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>{% trans "title" %}</th>
+                <th>{% trans "slug" %}</th>
+                <th>{% trans "content" %}</th>
+                <th>{% trans "status" %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for post in object_list %}
+            <tr>
+                <td>
+                    {{post.title}}
+                </td>
+                <td>
+                    {{post.slug}}
+                </td>
+                <td>
+                    {{post.content}}
+                </td>
+                <td>
+                    {{post.status}}
+                </td>
+                <td>
+                    <a class="btn btn-success" href="#">
+                        <i class="icon-white icon-edit"></i>
+                        {% trans "edit" %}
+                    </a>
+
+                </td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

@@ -55,7 +55,7 @@ class BaseView(View):
         if 'action' in kwargs:
             """
             if action param is defined un urls.py the view will call a method with this param name
-            otherwise update method will called by default
+            otherwise create method will called by default
             """
             func = getattr(self, kwargs.get('action'))
             return func(*args, **kwargs)
@@ -110,7 +110,6 @@ class BaseView(View):
         try:
             content = simplejson.dumps(obj)
         except Exception as a:
-            print(a)
             content = {}
         return http.HttpResponse(content, mimetype='application/json')
 
@@ -131,12 +130,8 @@ class IndexView(BaseView):
         original login implementation can be views here:
         https://github.com/django/django/blob/stable/1.4.x/django/contrib/auth/views.py
         """
-        post_dict = {}
-        print request.POST
-        #post_dict = request.POST.get('model')
-        #print post_dict
         if request.method != "POST":
-            return self.json_to_response(obj={'error': 'invalid request'})
+            return self.json_to_response(obj={'errors': ['invalid request']})
         else:
             form = AuthenticationForm(data=request.POST)
             if form.is_valid():
@@ -146,9 +141,9 @@ class IndexView(BaseView):
                 if request.session.test_cookie_worked():
                     request.session.delete_test_cookie()
 
-                return self.json_to_response(obj={'ok': url_post_list})
+                return self.json_to_response(obj={'ok': {'url': url_post_list}})
             else:
-               return self.json_to_response(obj={'error': form.errors})
+               return self.json_to_response(obj={'errors': form.errors})
 
 
 
