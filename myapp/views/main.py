@@ -12,6 +12,7 @@ from django.utils.decorators import method_decorator
 from django.utils.log import getLogger
 from django.views.generic import View
 
+from myapp.serializer import json_serialize
 from myapp.models.main import PostModel
 from myapp.forms.main import PostForm
 
@@ -111,12 +112,7 @@ class BaseView(View):
         return simplejson.loads(str(value))
 
     def json_to_response(self, obj={}):
-        try:
-            print obj
-            content = simplejson.dumps(obj)
-        except Exception as a:
-            print a
-            content = {}
+        content = json_serialize(obj)
         return http.HttpResponse(content, mimetype='application/json')
 
     def get_records_by_page(self):
@@ -182,9 +178,11 @@ class PostView(BaseView):
 
         try:
             object_list = p.page(current_page)
+
         except PageNotAnInteger:
             current_page = 1
             object_list = p.page(current_page)
+
         except EmptyPage:
             object_list = p.page(p.num_pages)
 
@@ -192,11 +190,13 @@ class PostView(BaseView):
             context = {'object_list': object_list,
                        'current_page': current_page,
                        'paginator': p,
+                       'json_object_list': json_serialize(object_list.object_list),
                        'records_by_page': records_by_page}
             return self.template_response(request, template_name='post/list.html', context=context)
 
         else:
-            return self.json_to_response(obj=objects)
+            context = {'object_list': objects, 'current_page': current_page}
+            return self.json_to_response(obj=context)
 
     def edit(self, *args, **kwargs):
         request = args[0]

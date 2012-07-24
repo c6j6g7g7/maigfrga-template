@@ -48,10 +48,9 @@ class ViewTestCase(BaseTestCase):
         #this view is login protected, for that reason we have simulate login first
         self.client.login(username=user.username, password='test')
         response = self.client.get(post_list, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        print response
-        #self.assertContains(response,'slug3')
-        #self.assertContains(response,'slug5')
-        #self.assertNotContains(response,'slug does not exists')
+        self.assertContains(response,'slug3')
+        self.assertContains(response,'slug5')
+        self.assertNotContains(response,'slug does not exists')
 
     def test_edit_post(self):
         user = ModelTestFactory.getUser(password='test')

@@ -56,3 +56,7 @@ var  LoginView = Backbone.View.extend({
                     }
                 }
              });
+
+var PostListView = Backbone.View.extend({
+        url: '/post/'
+});

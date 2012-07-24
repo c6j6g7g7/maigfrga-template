@@ -42,3 +42,13 @@
     {% numerated_pagination %}
 {% endblock %}
 
+{% block page_script %}
+    {{block.super}}
+    <script>
+    $(function() {
+       var postCollection = new PostCollection({% autoescape off %}{{json_object_list}}{% endautoescape %});
+       new WorkspaceRouter();
+       //Backbone.history.start({pushState: true});
+    });
+    </script>
+{% endblock %}
