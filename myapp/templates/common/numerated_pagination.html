@@ -1,0 +1,11 @@
+{% if paginator %}
+    <div class="pagination">
+        <ul>
+            {% for p in paginator.page_range %}
+                <li {% if current_page == forloop.counter%} class="active" {% endif %}>
+                    <a href="#"> {{forloop.counter}} </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

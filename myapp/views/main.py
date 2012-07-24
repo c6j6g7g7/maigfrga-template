@@ -1,5 +1,7 @@
 """main.py Main views for your app"""
 from django import http
+from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.urlresolvers import reverse
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
@@ -46,6 +48,8 @@ class BaseView(View):
 
     def get(self, *args, **kwargs):
         return super(BaseView, self).get(*args, **kwargs)
+
+
 
     def post(self, *args, **kwargs):
         """
@@ -108,11 +112,15 @@ class BaseView(View):
 
     def json_to_response(self, obj={}):
         try:
+            print obj
             content = simplejson.dumps(obj)
         except Exception as a:
+            print a
             content = {}
         return http.HttpResponse(content, mimetype='application/json')
 
+    def get_records_by_page(self):
+        return getattr(settings, 'RECORDS_BY_PAGE', 10)
 
 class IndexView(BaseView):
     """
@@ -167,9 +175,28 @@ class PostView(BaseView):
 
     def object_list(self, *args, **kwargs):
         request = args[0]
-        object_list = PostModel.get_list()
-        context = {'object_list': object_list}
-        return self.template_response(request, template_name='post/list.html', context=context)
+        current_page = request.GET.get('p', 1)
+        objects = PostModel.get_list()
+        records_by_page = self.get_records_by_page()
+        p = Paginator(objects, records_by_page)
+
+        try:
+            object_list = p.page(current_page)
+        except PageNotAnInteger:
+            current_page = 1
+            object_list = p.page(current_page)
+        except EmptyPage:
+            object_list = p.page(p.num_pages)
+
+        if not request.is_ajax():
+            context = {'object_list': object_list,
+                       'current_page': current_page,
+                       'paginator': p,
+                       'records_by_page': records_by_page}
+            return self.template_response(request, template_name='post/list.html', context=context)
+
+        else:
+            return self.json_to_response(obj=objects)
 
     def edit(self, *args, **kwargs):
         request = args[0]

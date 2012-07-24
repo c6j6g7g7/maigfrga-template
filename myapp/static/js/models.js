@@ -25,3 +25,7 @@ var UserLogin = Backbone.Model.extend({
         }
     }
 });
+
+var Post = Backbone.Model.extend({});
+
+var PostCollection =  Backbone.Collection.extend({model: Post});

@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 {% load i18n %}
 {% load url from future %}
-
+{% load myapptags %}
 {% block main %}
     <table class="table table-striped">
         <thead>
@@ -39,5 +39,6 @@
         {% endfor %}
         </tbody>
     </table>
+    {% numerated_pagination %}
 {% endblock %}
 

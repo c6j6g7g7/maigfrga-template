@@ -14,7 +14,7 @@ class ViewTestCase(BaseTestCase):
         #first send an empty post and check by faluire
         url = reverse('login')
         response = self.client.post(url)
-        self.assertContains(response,'{"error": {"username": ["This field is required."], "password": ["This field is required."]}}')
+        self.assertContains(response,'{"errors": {"username": ["This field is required."], "password": ["This field is required."]}}')
 
         #check by an inexsisten username
         post_params = {'username': 'fake@fake.com', 'password': '123'}
@@ -38,6 +38,20 @@ class ViewTestCase(BaseTestCase):
         self.assertContains(response,'slug3')
         self.assertContains(response,'slug5')
         self.assertNotContains(response,'slug does not exists')
+
+
+    def test_list_post_ajax(self):
+        user = ModelTestFactory.getUser(password='test')
+        post_list = reverse('post')
+        for i in xrange(0, 60):
+            ModelTestFactory.getPost(slug='slug{0}'.format(i), status=PostModel.STATUS.PUBLISHED)
+        #this view is login protected, for that reason we have simulate login first
+        self.client.login(username=user.username, password='test')
+        response = self.client.get(post_list, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        print response
+        #self.assertContains(response,'slug3')
+        #self.assertContains(response,'slug5')
+        #self.assertNotContains(response,'slug does not exists')
 
     def test_edit_post(self):
         user = ModelTestFactory.getUser(password='test')

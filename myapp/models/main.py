@@ -22,6 +22,19 @@ class BaseModel(models.Model):
     create_datetime = models.DateTimeField(default=datetime.datetime.now())
     objects = BaseManager()
 
+    def to_dict(self):
+        """
+        take the model fields an create a dictionary with this values
+        """
+        data = {}
+        try:
+            opts = self._meta
+            for f in opts.fields:
+                data[f.name] = f.value_from_object(self)
+        except:
+            pass
+        return data
+
     @classmethod
     def enum(cls, **enums):
         """
