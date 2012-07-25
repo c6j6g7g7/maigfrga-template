@@ -1,9 +1,14 @@
 var WorkspaceRouter = Backbone.Router.extend({
     routes: {
-        '/post/': 'post_list'
+        'post/:page': 'post_list',
+        'post/add': 'post_add'
     },
 
-    post_list: function(){
-           console.log('post_list');
+    post_list: function(page){
+           alert('post_list');
+    },
+
+    post_add: function(){
+        alert('post_add');
     }
 });

@@ -1,1 +1,8 @@
-{{form.as_ul}}
+{% extends "main.html" %}
+{% load i18n %}
+{% load url from future %}
+{% load myapptags %}
+{% block main %}
+    {%include "post/_form.html" %}
+{% endblock %}
+

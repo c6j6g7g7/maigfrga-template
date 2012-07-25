@@ -48,7 +48,11 @@ class BaseView(View):
         return super(BaseView, self).dispatch(*args, **kwargs)
 
     def get(self, *args, **kwargs):
-        return super(BaseView, self).get(*args, **kwargs)
+        if 'action' in kwargs:
+            func = getattr(self, kwargs.get('action'))
+            return func(*args, **kwargs)
+        else:
+            return super(BaseView, self).get(*args, **kwargs)
 
 
 
@@ -103,6 +107,14 @@ class BaseView(View):
         t = loader.get_template(template_name)
         c = RequestContext(request, context)
         return http.HttpResponse(t.render(c))
+
+    def template_to_string(self, template_name='base.html', context={}):
+        template_string = ''
+        try:
+            template_string = loader.render_to_string(template_name, context)
+        except Exception as error:
+            pass
+        return template_string
 
     def invalid_request(self, request):
         return http.HttpResponseBadRequest()
@@ -161,8 +173,13 @@ class PostView(BaseView):
         If id params is set, will render a sigle PostModel object,
         otherwise will render a PostModel list
         """
-        if 'id' in kwargs:
+        if 'action' in kwargs:
+            func = getattr(self, kwargs.get('action'))
+            return func(*args, **kwargs)
+
+        elif 'id' in kwargs:
             return self.edit(*args, **kwargs)
+
         else:
             return self.object_list(*args, **kwargs)
 
@@ -171,7 +188,7 @@ class PostView(BaseView):
 
     def object_list(self, *args, **kwargs):
         request = args[0]
-        current_page = request.GET.get('page', 1)
+        current_page = int(request.GET.get('page', 1))
         objects = PostModel.get_list()
         records_by_page = self.get_records_by_page()
         p = Paginator(objects, records_by_page)
@@ -199,17 +216,28 @@ class PostView(BaseView):
             return self.json_to_response(obj=context)
 
     def edit(self, *args, **kwargs):
+        """
+        If id param is in kwargs will search a record on database and populate form
+        otherwise is a new post to be created
+        """
         request = args[0]
         context = {}
-        try:
-            context['obj'] = PostModel.objects.get(id=kwargs.get('id'))
-            context['form'] = PostForm(initial={'title': context['obj'].title,
-                                                'content': context['obj'].content,
-                                                'slug': context['obj'].slug})
-        except PostModel.DoesNotExist:
-            return http.HttpResponseRedirect(reverse('post'))
 
-        return self.template_response(request, template_name='post/edit.html', context=context)
+        if 'id' in kwargs:
+            try:
+                context['obj'] = PostModel.objects.get(id=kwargs.get('id'))
+                context['form'] = PostForm(initial={'title': context['obj'].title,
+                                                    'content': context['obj'].content,
+                                                    'slug': context['obj'].slug})
+            except PostModel.DoesNotExist:
+                return http.HttpResponseRedirect(reverse('post'))
+        else:
+            context['form'] = PostForm()
+        if not request.is_ajax():
+            return self.template_response(request, template_name='post/edit.html', context=context)
+        else:
+            json_params = {'template_string': self.template_to_string(template_name='post/_form.html', context=context)}
+            return self.json_to_response(obj=json_params)
 
     def create(self, *args, **kwargs):
         request = args[0]

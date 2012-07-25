@@ -26,12 +26,28 @@ var UserLogin = Backbone.Model.extend({
     }
 });
 
-var Post = Backbone.Model.extend({url: '/post/'});
+var Post = Backbone.Model.extend({
+    url: '/post/',
+    validation : {
+        title: {
+            required: true,
+            msg: 'Please enter the title'
+            },
+        slug: {
+            required: true,
+            msg: 'Slug is required'
+            },
+        content: {
+            required: true,
+            msg: 'Content is required'
+            }
+        }
+});
 
 var PostCollection =  Backbone.Collection.extend({
-                        model: Post,
-                        'url': '/post/',
-                         parse: function(response){
-                                return response.object_list;
-                             }
-                        });
+    model: Post,
+    'url': '/post/',
+    parse: function(response){
+        return response.object_list;
+    }
+});

@@ -3,7 +3,7 @@
         <ul>
             {% for p in paginator.page_range %}
                 <li {% if current_page == forloop.counter%} class="active" {% endif %}>
-                    <a href="#"> {{forloop.counter}} </a>
+                    <a href="page?{{forloop.counter}}"> {{forloop.counter}} </a>
                 </li>
             {% endfor %}
         </ul>

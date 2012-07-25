@@ -4,6 +4,10 @@
 {% load myapptags %}
 {% block main %}
     <div id="post-list" class="">
+       <a class="btn btn-success span2 offset9" href="#post/add">
+        <i class="icon-white icon-plus-sign"></i>
+        {% trans "create post" %}
+       </a>
         {% numerated_pagination %}
         <table class="table table-striped">
             <thead>

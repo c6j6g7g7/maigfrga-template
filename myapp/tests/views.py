@@ -62,6 +62,20 @@ class ViewTestCase(BaseTestCase):
         self.assertContains(response, post.slug)
         self.assertContains(response, post.content)
 
+    def test_add_post(self):
+        user = ModelTestFactory.getUser(password='test')
+        post_edit = reverse('add_post')
+        self.client.login(username=user.username, password='test')
+        response = self.client.get(post_edit)
+        self.assertContains(response, 'id_content')
+
+    def test_add_post_json(self):
+        user = ModelTestFactory.getUser(password='test')
+        post_edit = reverse('add_post')
+        self.client.login(username=user.username, password='test')
+        response = self.client.get(post_edit, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertContains(response, 'id_content')
+
     def test_create_post(self):
         user = ModelTestFactory.getUser(password='test')
         post_edit = reverse('post')

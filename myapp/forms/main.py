@@ -1,11 +1,13 @@
 from django import forms
+from django.forms.widgets import Textarea
+
 from myapp.models.main import PostModel
 
 
 class PostForm(forms.Form):
     title = forms.CharField(required=True)
     slug = forms.CharField(required=True)
-    content = forms.CharField(required=True)
+    content = forms.CharField(required=True, widget=Textarea)
 
     def clean_title(self):
         title = self.cleaned_data['title']

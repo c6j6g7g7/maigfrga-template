@@ -1,0 +1,30 @@
+{% load i18n %}
+{% load url from future %}
+<div id="post-container" class="span4 offset3">
+    <form class="span4 well" method="post" action="{% url 'post' %}" >
+        {% csrf_token %}
+        <ul class="span3">
+            <li class="title control-group">
+                <label class="control-label" for="id_title">{% trans "title" %}</label>
+                <div class="controls">
+                    {{form.title}}
+                </div>
+            </li>
+            <li class="slug control-group">
+                <label class="control-label" for="id_slug">{% trans "slug" %}</label>
+                <div class="controls">
+                    {{form.slug}}
+                </div>
+            </li>
+            <li class="content control-group">
+                <label class="control-label" for="id_content">{% trans "content" %}</label>
+                <div class="controls">
+                    {{form.content}}
+                </div>
+            </li>
+        </ul>
+        <div class="offset1">
+            <input type="submit" id="savePostBtn" class="btn btn-success btn-large span2" value="{% trans "save" %}"></input>
+        </div>
+    </form>
+</div>
