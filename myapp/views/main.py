@@ -171,7 +171,7 @@ class PostView(BaseView):
 
     def object_list(self, *args, **kwargs):
         request = args[0]
-        current_page = request.GET.get('p', 1)
+        current_page = request.GET.get('page', 1)
         objects = PostModel.get_list()
         records_by_page = self.get_records_by_page()
         p = Paginator(objects, records_by_page)
@@ -188,14 +188,14 @@ class PostView(BaseView):
 
         if not request.is_ajax():
             context = {'object_list': object_list,
-                       'current_page': current_page,
+                       'page': current_page,
                        'paginator': p,
                        'json_object_list': json_serialize(object_list.object_list),
                        'records_by_page': records_by_page}
             return self.template_response(request, template_name='post/list.html', context=context)
 
         else:
-            context = {'object_list': objects, 'current_page': current_page}
+            context = {'object_list': object_list.object_list, 'current_page': current_page}
             return self.json_to_response(obj=context)
 
     def edit(self, *args, **kwargs):

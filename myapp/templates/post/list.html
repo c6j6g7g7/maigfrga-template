@@ -3,43 +3,46 @@
 {% load url from future %}
 {% load myapptags %}
 {% block main %}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>{% trans "title" %}</th>
-                <th>{% trans "slug" %}</th>
-                <th>{% trans "content" %}</th>
-                <th>{% trans "status" %}</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for post in object_list %}
-            <tr>
-                <td>
-                    {{post.title}}
-                </td>
-                <td>
-                    {{post.slug}}
-                </td>
-                <td>
-                    {{post.content}}
-                </td>
-                <td>
-                    {{post.status}}
-                </td>
-                <td>
-                    <a class="btn btn-success" href="#">
-                        <i class="icon-white icon-edit"></i>
-                        {% trans "edit" %}
-                    </a>
-
-                </td>
+    <div id="post-list" class="">
+        {% numerated_pagination %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>{% trans "title" %}</th>
+                    <th>{% trans "slug" %}</th>
+                    <th>{% trans "content" %}</th>
+                    <th>{% trans "status" %}</th>
+                    <th></th>
                 </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% numerated_pagination %}
+            </thead>
+            <tbody>
+            {% for post in object_list %}
+                <tr>
+                    <td>
+                        {{post.title}}
+                    </td>
+                    <td>
+                        {{post.slug}}
+                    </td>
+                    <td>
+                        {{post.content}}
+                    </td>
+                    <td>
+                        {{post.status}}
+                    </td>
+                    <td>
+                        <a class="btn btn-success" href="#">
+                            <i class="icon-white icon-edit"></i>
+                            {% trans "edit" %}
+                        </a>
+
+                    </td>
+                    </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% numerated_pagination %}
+    </div>
 {% endblock %}
 
 {% block page_script %}
@@ -47,8 +50,8 @@
     <script>
     $(function() {
        var postCollection = new PostCollection({% autoescape off %}{{json_object_list}}{% endautoescape %});
+       var postListView = new PostListView({models: postCollection});
        new WorkspaceRouter();
-       //Backbone.history.start({pushState: true});
     });
     </script>
 {% endblock %}

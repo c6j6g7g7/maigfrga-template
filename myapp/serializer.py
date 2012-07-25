@@ -48,7 +48,7 @@ def _model_to_dict(model):
         for f in opts.fields:
             data[f.name] = str(f.value_from_object(model))
     except:
-        pass
+        data = {}
     return data
 
 def _serialize_model(model):

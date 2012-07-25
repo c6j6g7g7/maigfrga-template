@@ -58,5 +58,47 @@ var  LoginView = Backbone.View.extend({
              });
 
 var PostListView = Backbone.View.extend({
-        url: '/post/'
+        url: '/post/',
+        el: '#post-list',
+        initialize: function(params){
+            //If models is not setted in params, we must create a model instance
+            if(params != undefined){
+                if(params.models == undefined){
+                    this.models = new PostCollection;
+                }else{
+                    this.models = params.models;
+                }
+            }
+            else{
+                this.models = new PostCollection;
+            }
+        },
+        events: {
+            'click #post-list div.pagination ul li a': 'list'
+        },
+        list : function(e){
+           var page = this.$(e.currentTarget).text();
+           e.preventDefault();
+           this.models.fetch({data: {page: page}});
+           this.render();
+        },
+        render: function(params){
+            var str_template = ['<tr>',
+                                '<td><%= title %></td>',
+                                '<td><%= slug %></td>',
+                                '<td><%= content %></td>',
+                                '<td><%= status %></td>',
+                                '<td>',
+                                '<a class="btn btn-success" href="#">',
+                                '<i class="icon-white icon-edit"></i>edit</a></td>',
+                                '</tr>']
+            var template = _.template(str_template.join(''));
+            var post_list = '';
+            var build_records = function(obj){
+                console.log(obj.attributes);
+                 post_list += template(obj.attributes);
+                }
+            _.each(this.models.models, build_records);
+            this.$el.find('tbody').empty().html(post_list);
+        }
 });

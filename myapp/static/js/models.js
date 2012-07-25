@@ -26,6 +26,12 @@ var UserLogin = Backbone.Model.extend({
     }
 });
 
-var Post = Backbone.Model.extend({});
+var Post = Backbone.Model.extend({url: '/post/'});
 
-var PostCollection =  Backbone.Collection.extend({model: Post});
+var PostCollection =  Backbone.Collection.extend({
+                        model: Post,
+                        'url': '/post/',
+                         parse: function(response){
+                                return response.object_list;
+                             }
+                        });
