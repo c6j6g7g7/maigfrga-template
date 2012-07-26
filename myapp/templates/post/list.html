@@ -4,7 +4,7 @@
 {% load myapptags %}
 {% block main %}
     <div id="post-list" class="">
-       <a class="btn btn-success span2 offset9" href="#post/add">
+       <a class="btn btn-success span2 offset9" href="#add">
         <i class="icon-white icon-plus-sign"></i>
         {% trans "create post" %}
        </a>
@@ -50,12 +50,13 @@
 {% endblock %}
 
 {% block page_script %}
-    {{block.super}}
     <script>
+    {% include "js/routers.js" %}
     $(function() {
        var postCollection = new PostCollection({% autoescape off %}{{json_object_list}}{% endautoescape %});
        var postListView = new PostListView({models: postCollection});
-       new WorkspaceRouter();
+       var post_router = new PostRouter({postListView: postListView});
+        Backbone.history.start();
     });
     </script>
 {% endblock %}

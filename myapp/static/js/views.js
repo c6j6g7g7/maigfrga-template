@@ -76,9 +76,7 @@ var PostListView = Backbone.View.extend({
     events: {
         'click #post-listd div.pagination ul li a': 'list'
     },
-    list : function(e){
-       var page = this.$(e.currentTarget).text();
-       e.preventDefault();
+    list : function(page){
        this.models.fetch({data: {page: page}});
        this.render();
     },
@@ -119,6 +117,22 @@ var PostView = Backbone.View.extend({
 
     events: {
         'click #savePostBtn': 'savePost'
+    },
+
+    make: function(template_string){
+        $('article.container').append(template_string);
+    },
+
+    renderForm: function(oldView){
+        var current_view = this;
+        var success = function(model, response){
+            if(response.template_string != undefined){
+                oldView.remove();
+                current_view.make(response.template_string);
+            }
+        };
+         this.model.fetch({success: success});
+
     },
 
     savePost: function(e){

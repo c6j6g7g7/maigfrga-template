@@ -108,10 +108,10 @@ class BaseView(View):
         c = RequestContext(request, context)
         return http.HttpResponse(t.render(c))
 
-    def template_to_string(self, template_name='base.html', context={}):
+    def template_to_string(self, request, template_name='base.html', context={}):
         template_string = ''
         try:
-            template_string = loader.render_to_string(template_name, context)
+            template_string = loader.render_to_string(template_name, RequestContext(request, context))
         except Exception as error:
             pass
         return template_string
@@ -236,7 +236,7 @@ class PostView(BaseView):
         if not request.is_ajax():
             return self.template_response(request, template_name='post/edit.html', context=context)
         else:
-            json_params = {'template_string': self.template_to_string(template_name='post/_form.html', context=context)}
+            json_params = {'template_string': self.template_to_string(request, template_name='post/_form.html', context=context)}
             return self.json_to_response(obj=json_params)
 
     def create(self, *args, **kwargs):
