@@ -3,6 +3,8 @@
 {% load url from future %}
 {% load myapptags %}
 {% block main %}
-    {%include "post/_form.html" %}
+    <div id="post-container" class="span4 offset3">
+        {%include "post/_form.html" %}
+    </div>
 {% endblock %}
 

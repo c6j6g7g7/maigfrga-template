@@ -119,8 +119,12 @@ var PostView = Backbone.View.extend({
         'click #savePostBtn': 'savePost'
     },
 
-    make: function(template_string){
-        $('article.container').append(template_string);
+    make_view: function(template_string){
+        this.el = this.make('div', {'id': 'post-container', 'class': 'span4 offset3'});
+        this.$el = $(this.el);
+        $(this.el).append(template_string);
+        $('#article-container').append(this.el);
+        this.delegateEvents(this.events);
     },
 
     renderForm: function(oldView){
@@ -128,14 +132,50 @@ var PostView = Backbone.View.extend({
         var success = function(model, response){
             if(response.template_string != undefined){
                 oldView.remove();
-                current_view.make(response.template_string);
+                current_view.make_view(response.template_string);
+                //current_view.model = new Post;
             }
         };
          this.model.fetch({success: success});
 
     },
 
+    render: function(params) {
+        if (params == undefined) params = {};
+        if(params.errors != undefined ){
+            //If param.errors is definided, a validation error has happen and has to be rendered
+            notempo.utils.show_errors(this.$el, params);
+            }
+        return this;
+    },
+
     savePost: function(e){
         e.preventDefault();
+        this.model = new Post;
+        //this.model.unset('template_string');
+        this.model.set({'title': this.$("#id_title").val(),
+                        'slug': this.$("#id_slug").val(),
+                        'content': this.$("#id_content").val()});
+        Backbone.Validation.bind(this);
+        if (!this.model.isValid(true)){
+            var error_params = {'errors': this.model.validate()};
+            this.render(error_params);
+        }else{
+            this.$('div.alert-error').remove();
+
+           /* var current_view = this;
+            var success = function(model, response){
+                if(response.errors != undefined){
+                    var params = {'errors': response.errors};
+                    current_view.render(params);
+                }else{
+                    if(response.ok != undefined){
+                            window.location.replace(response.ok.url);
+                        }
+                }
+             };
+
+             this.model.save({},{success: success});*/
+        }
     }
 });

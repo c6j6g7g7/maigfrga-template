@@ -34,7 +34,7 @@ notempo.utils = (function(){
                     control_group.find('div.controls').append(template({'error': value}));
                 }
             }
-
+             $('div.alert-error').remove();
              _.each(options.errors, render_errors);
         };
 
@@ -58,17 +58,44 @@ notempo.utils = (function(){
             return name;
         }
     };
+
+    var _form_to_ajax_parameters = function(form) {
+        var data = {};
+        $("input", form).each(function() {
+            var input = $(this);
+            if (!input.hasClass("ignore") && 'submit' != input.attr('type')) {
+                data[input.attr('name')] = input.val();
+            }
+        });
+	    $("textarea", form).each(function() {
+            var textarea = $(this);
+            if (!textarea.hasClass("ignore")) {
+                data[textarea.attr('name')] = textarea.val();
+            }
+        });
+        $("select", form).each(function() {
+            var select = $(this);
+            if (!select.hasClass("ignore")) {
+                data[select.attr('name')] = select.val();
+            }
+        });
+        return data;
+    };
+
     return {
-        get_file_version:function(name, version){
+        get_file_version: function(name, version){
             return _get_file_version(name, version);
         },
-	    detect_browser:function(agent){
+	    detect_browser: function(agent){
 	        var useragent = navigator.userAgent.toLowerCase();
 	        return (useragent.indexOf(agent.toLowerCase()) != -1)
 	    },
-        show_errors:function(el, options){
+        show_errors: function(el, options){
 	        _show_errors(el, options);
     	},
+        form_to_ajax_parameters: function(form){
+            return _form_to_ajax_parameters(form);
+        }
     };
 
 })();

@@ -1,10 +1,11 @@
 from django import forms
-from django.forms.widgets import Textarea
+from django.forms.widgets import Textarea, HiddenInput
 
 from myapp.models.main import PostModel
 
 
 class PostForm(forms.Form):
+    id = forms.IntegerField(required=False, widget=HiddenInput)
     title = forms.CharField(required=True)
     slug = forms.CharField(required=True)
     content = forms.CharField(required=True, widget=Textarea)
