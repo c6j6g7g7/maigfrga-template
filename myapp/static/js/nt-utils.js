@@ -82,19 +82,37 @@ notempo.utils = (function(){
         return data;
     };
 
+    var _render_validation_errors = function(el, options){
+            el.find('.error').removeClass('error');
+            var error_params = {'errors': options.model.validate()};
+            error_params.el = el;
+            options.error(error_params);
+    };
+
     return {
         get_file_version: function(name, version){
             return _get_file_version(name, version);
         },
+
 	    detect_browser: function(agent){
 	        var useragent = navigator.userAgent.toLowerCase();
 	        return (useragent.indexOf(agent.toLowerCase()) != -1)
 	    },
+
         show_errors: function(el, options){
 	        _show_errors(el, options);
     	},
+
         form_to_ajax_parameters: function(form){
             return _form_to_ajax_parameters(form);
+        },
+
+        render_validation_errors: function(el, options){
+            if(el == undefined) return false;
+            if(options == undefined) return false;
+            if(options.model == undefined) return false;
+            if(options.error == undefined) return false;
+            _render_validation_errors(el, options);
         }
     };
 
@@ -104,11 +122,11 @@ notempo.namespace('modernizr');
 notempo.modernizr = (function(){
     return {
         canvas: function () {
-            var test =Modernizr.canvas;
+            var test = Modernizr.canvas;
 	        return test;
         },
 	    geolocation:function(){
-	        var test=Modernizr.geolocation;
+	        var test = Modernizr.geolocation;
 	        return test;
 	    }
     }

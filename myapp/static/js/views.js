@@ -141,6 +141,11 @@ var PostView = Backbone.View.extend({
     },
 
     render: function(params) {
+        if(params == undefined) params = {};
+        if(this.$el == undefined){
+            if(params.el != null)this.$el = params.el;
+            else return this;
+        }
         if (params == undefined) params = {};
         if(params.errors != undefined ){
             //If param.errors is definided, a validation error has happen and has to be rendered
@@ -151,19 +156,39 @@ var PostView = Backbone.View.extend({
 
     savePost: function(e){
         e.preventDefault();
-        this.model = new Post;
-        //this.model.unset('template_string');
-        this.model.set({'title': this.$("#id_title").val(),
-                        'slug': this.$("#id_slug").val(),
-                        'content': this.$("#id_content").val()});
+        var form = this.$('#post-form'), params={};
+        params = notempo.utils.form_to_ajax_parameters(form);
+        this.model = new Post
+        this.model.set(params);
         Backbone.Validation.bind(this);
-        if (!this.model.isValid(true)){
+        if(!this.model.isValid(true)){
+            var validation_params = {model: this.model, error: this.render};
+            notempo.utils.render_validation_errors(this.$el, validation_params);
+        }else{
+            this.$('div.alert-error').remove();
+            this.$el.find('.error').removeClass('error');
+
+            var current_view = this;
+
+            var success = function(model, response){
+                if(response.errors != undefined){
+                    var params = {'errors': response.errors};
+                    current_view.render(params);
+                }else{
+                    if(response.ok != undefined){
+                            console.log(response.ok);
+                        }
+                }
+             };
+
+             this.model.save({},{success: success});
+        }
+        /*if (!this.model.isValid(true)){
             var error_params = {'errors': this.model.validate()};
             this.render(error_params);
         }else{
-            this.$('div.alert-error').remove();
-
-           /* var current_view = this;
+            
+            var current_view = this;
             var success = function(model, response){
                 if(response.errors != undefined){
                     var params = {'errors': response.errors};
@@ -175,7 +200,7 @@ var PostView = Backbone.View.extend({
                 }
              };
 
-             this.model.save({},{success: success});*/
-        }
+             this.model.save({},{success: success});
+        }*/
     }
 });
