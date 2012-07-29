@@ -12,7 +12,7 @@ class PostModelTestCase(BaseTestCase):
         post = PostModel(status=8854)
         post.save()
 
-    @raises(IntegrityError, "column slug is not unique")
+    @raises(ModelError, "slug exits")
     def test_create_post_fail_slug_already_exits(self):
         ModelTestFactory.getPost(slug='i-like-python')
         post2 = PostModel(title=ModelTestFactory.create_unique_string(),

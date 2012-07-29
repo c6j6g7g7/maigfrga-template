@@ -52,7 +52,7 @@ class PostModel(BaseModel):
 
     @classmethod
     def get_list(cls, **kwargs):
-        return PostModel.objects.filter(**kwargs)
+        return PostModel.objects.filter(**kwargs).order_by('-id')
 
     @classmethod
     def slug_exists(cls, slug=''):
@@ -69,7 +69,12 @@ class PostModel(BaseModel):
 
     def save(self, *args, **kwargs):
         if self._check_status():
-            super(PostModel, self).save(*args, **kwargs)
+            pass
+
+        if self.slug_exists(slug=self.slug) and not self.id:
+            raise ModelError("slug exits")
+
+        super(PostModel, self).save(*args, **kwargs)
 
     class Meta:
         app_label = 'myapp'

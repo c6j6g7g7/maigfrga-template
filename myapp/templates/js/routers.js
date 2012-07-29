@@ -9,31 +9,43 @@ var PostRouter = Backbone.Router.extend({
             this.postListView = options.postListView;
         }
     },
+
     routes: {
         'p:page': 'list',
         'add': 'add',
         'get': 'get',
         'save': 'save',
-        '*actions': 'defaultRoute' // Backbone will try match the route above first
+        '*actions': 'make_list' // Backbone will try match the route above first
     },
+
     list: function(page){
+        if(notempo.utils.element_exists('#post-container')){
+            this.postView.remove();
+        }
         this.postListView.list(page);
     },
+
     add: function(){
         var modelPost = new Post();
         modelPost.url = '{%url "add_post" %}';
-        var postView = new PostView({model:modelPost});
-        postView.renderForm(this.postListView);
+        this.postView = new PostView({model:modelPost});
+        this.postView.renderForm(this.postListView);
+        if(notempo.utils.element_exists('#post-container')){
+            this.postListView.remove();
+        }
     },
+
     get: function(id) {
         // Note the variable in the route definition being passed in here
     },
+
     save: function(){
     },
-    defaultRoute: function( actions ){
-        return false;
+
+    make_list: function( actions ){
+        if(this.postView){
+            this.postView.remove();
+        }
+        this.postListView.make_list();
     }
 });
-
-
-

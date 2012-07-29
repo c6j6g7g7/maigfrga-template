@@ -48,14 +48,14 @@ class ViewTestCase(BaseTestCase):
         #this view is login protected, for that reason we have simulate login first
         self.client.login(username=user.username, password='test')
         response = self.client.get(post_list, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertContains(response,'slug3')
-        self.assertContains(response,'slug5')
+        self.assertContains(response,'slug50')
+        self.assertContains(response,'slug55')
         self.assertNotContains(response,'slug does not exists')
 
     def test_edit_post(self):
         user = ModelTestFactory.getUser(password='test')
         post = ModelTestFactory.getPost(status=PostModel.STATUS.PUBLISHED)
-        post_edit = reverse('post', kwargs={'id': post.id})
+        post_edit = reverse('update_post', kwargs={'id': post.id})
         self.client.login(username=user.username, password='test')
         response = self.client.get(post_edit)
         self.assertContains(response, post.title)
@@ -91,11 +91,23 @@ class ViewTestCase(BaseTestCase):
         self.assertContains(response,content)
         self.assertEquals(1, PostModel.objects.all().count())
 
+    def test_create_post_fail_slug_exists(self):
+        user = ModelTestFactory.getUser(password='test')
+        post = ModelTestFactory.getPost(status=PostModel.STATUS.PUBLISHED)
+        post_edit = reverse('post')
+        self.client.login(username=user.username, password='test')
+        response = self.client.post(post_edit,{'title': ModelTestFactory.create_unique_string(),
+                                               'slug': post.slug,
+                                               'content': ModelTestFactory.create_unique_string()})
+
+        self.assertContains(response, 'slug exits')
+        self.assertEquals(1, PostModel.objects.all().count())
+
 
     def test_update_post(self):
         user = ModelTestFactory.getUser(password='test')
         post = ModelTestFactory.getPost(status=PostModel.STATUS.PUBLISHED)
-        post_edit = reverse('post', kwargs={'id': post.id})
+        post_edit = reverse('update_post', kwargs={'id': post.id})
         self.client.login(username=user.username, password='test')
         new_content = ModelTestFactory.create_unique_string()
         self.assertNotEquals(post.content,new_content)

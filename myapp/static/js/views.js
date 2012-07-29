@@ -59,7 +59,9 @@ var  LoginView = Backbone.View.extend({
 
 var PostListView = Backbone.View.extend({
     url: '/post/',
+
     el: '#post-list',
+
     initialize: function(params){
         //If models is not setted in params, we must create a model instance
         if(params != undefined){
@@ -72,31 +74,56 @@ var PostListView = Backbone.View.extend({
         else{
             this.models = new PostCollection;
         }
+
+        if(this.$el){
+            this.paginator = this.$el.find('div.pagination');
+        }
     },
+
     events: {
         'click #post-listd div.pagination ul li a': 'list'
     },
+
     list : function(page){
        this.models.fetch({data: {page: page}});
        this.render();
     },
+
     render: function(params){
-        var str_template = ['<tr>',
-                            '<td><%= title %></td>',
-                            '<td><%= slug %></td>',
-                            '<td><%= content %></td>',
-                            '<td><%= status %></td>',
-                            '<td>',
-                            '<a class="btn btn-success" href="#">',
-                            '<i class="icon-white icon-edit"></i>edit</a></td>',
-                            '</tr>']
-        var template = _.template(str_template.join(''));
-        var post_list = '';
-        var build_records = function(obj){
-             post_list += template(obj.attributes);
-            }
-        _.each(this.models.models, build_records);
-        this.$el.find('tbody').empty().html(post_list);
+        if(notempo.utils.element_exists('#post-list')){
+
+            var str_template = ['<tr>',
+                                '<td><%= title %></td>',
+                                '<td><%= slug %></td>',
+                                '<td><%= content %></td>',
+                                '<td><%= status %></td>',
+                                '<td>',
+                                '<a class="btn btn-success" href="#">',
+                                '<i class="icon-white icon-edit"></i>edit</a></td>',
+                                '</tr>']
+            var template = _.template(str_template.join(''));
+            var post_list = '';
+            var build_records = function(obj){
+                 if(!_.isEmpty(obj.attributes))
+                 post_list += template(obj.attributes);
+                }
+            _.each(this.models.models, build_records);
+
+           this.$el.find('tbody').empty().html(post_list);
+        }else{
+            this.make_list();
+        }
+    },
+
+    render_table: function(){
+        this.$el.append(this.paginator);
+    },
+
+    make_list: function(){
+        if(!notempo.utils.element_exists('#post-list')){
+            this.models.fetch();
+            $('#article-container').append(this.$el);
+        }
     }
 });
 
@@ -149,9 +176,25 @@ var PostView = Backbone.View.extend({
         if (params == undefined) params = {};
         if(params.errors != undefined ){
             //If param.errors is definided, a validation error has happen and has to be rendered
-            notempo.utils.show_errors(this.$el, params);
+            notempo.utils.show_errors($('#post-form'), params);
             }
         return this;
+    },
+
+    render_model: function(){
+        var str_template = ['<div id="post-detail" class="row">',
+                            '<h2><%= title %></h2>',
+                            '<p><%= slug %></p>',
+                            '<p><%= content %></p>',
+                            '<p><a class="btn btn-success btn-large span2">edit</a>',
+                            '<a class="btn btn-success btn-large span2" href="#list">go to list</a></p>',
+                            '</div>']
+        var template = _.template(str_template.join(''));
+        if(notempo.utils.element_exists('#post-form')){
+            this.$('#post-form').hide();
+            this.$el.append(template(this.model.attributes));
+        }
+
     },
 
     savePost: function(e){
@@ -161,9 +204,11 @@ var PostView = Backbone.View.extend({
         this.model = new Post
         this.model.set(params);
         Backbone.Validation.bind(this);
+
         if(!this.model.isValid(true)){
             var validation_params = {model: this.model, error: this.render};
             notempo.utils.render_validation_errors(this.$el, validation_params);
+
         }else{
             this.$('div.alert-error').remove();
             this.$el.find('.error').removeClass('error');
@@ -172,16 +217,21 @@ var PostView = Backbone.View.extend({
 
             var success = function(model, response){
                 if(response.errors != undefined){
+                    console.log(response.errors);
                     var params = {'errors': response.errors};
                     current_view.render(params);
                 }else{
                     if(response.ok != undefined){
-                            console.log(response.ok);
-                        }
+                        notempo.utils.show_msg(current_view.$el, response.ok.msg);
+                        console.log(response.ok);
+                        current_view.model.clear();
+                        current_view.model.set(response.ok.obj);
+                        current_view.render_model();
+                    }
                 }
              };
 
-             this.model.save({},{success: success});
+            this.model.save({},{success: success});
         }
         /*if (!this.model.isValid(true)){
             var error_params = {'errors': this.model.validate()};

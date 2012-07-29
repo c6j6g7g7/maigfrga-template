@@ -10,10 +10,11 @@ from django.template import RequestContext, loader
 from django.utils import simplejson
 from django.utils.decorators import method_decorator
 from django.utils.log import getLogger
+from django.utils.translation import ugettext as _
 from django.views.generic import View
 
 from myapp.serializer import json_serialize
-from myapp.models.main import PostModel
+from myapp.models.main import PostModel, ModelError
 from myapp.forms.main import PostForm
 
 logger = getLogger('django.request')
@@ -245,9 +246,20 @@ class PostView(BaseView):
             return http.HttpResponseRedirect(reverse('post'))
         form = PostForm(data=request.POST)
         if form.is_valid():
-            obj = form.save()
-            obj_dict = {'id': obj.id, 'slug': obj.slug, 'title': obj.title, 'content': obj.content, 'create_datetime': str(obj.create_datetime)}
-            return self.json_to_response(obj=obj_dict)
+            try:
+                obj = form.save()
+                obj_dict ={'ok': {'obj': {'id': obj.id, 'slug': obj.slug,
+                                          'title': obj.title, 'content': obj.content,
+                                          'create_datetime': str(obj.create_datetime)},
+                                  'msg': _('post created successfully :)')
+                                          }}
+
+                return self.json_to_response(obj=obj_dict)
+            except  ModelError as error:
+                return self.json_to_response(obj={'errors': {'__all__': [str(error)]}})
+            except Exception as error:
+                logger.error(error)
+                return self.json_to_response(obj={'errors': [_('we have make a mistake, please try again :-(')]})
         else:
             return self.json_to_response(obj={'errors': form.errors})
 
@@ -260,7 +272,11 @@ class PostView(BaseView):
             form = PostForm(request.PUT)
             if form.is_valid():
                 obj = form.save(obj_post=obj)
-                obj_dict = {'id': obj.id, 'slug': obj.slug, 'title': obj.title, 'content': obj.content, 'create_datetime': str(obj.create_datetime)}
+                obj_dict ={'ok': {'obj': {'id': obj.id, 'slug': obj.slug,
+                                          'title': obj.title, 'content': obj.content,
+                                          'create_datetime': str(obj.create_datetime)},
+                                  'msg': _('post created successfully :)')
+                                          }}
                 return self.json_to_response(obj=obj_dict)
             else:
                 return self.json_to_response(obj={'errors': form.errors})

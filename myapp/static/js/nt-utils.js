@@ -21,22 +21,26 @@ notempo.namespace=function(ns_string){
 notempo.namespace('utils');
 notempo.utils = (function(){
     var _show_errors = function(el, options){
-            var template = _.template('<div class="alert  alert-error"> <strong>oops!</strong>  <%= error %></div>');
-            var control_group = null;
-            var render_errors = function(value, field){
-                if (field == '__all__'){
-                    control_group = el.find('ul');
-                    control_group.prepend(template({'error': value[0]}));
-                    control_group.find('li').addClass('error');
-                }else{
-                    control_group = el.find('li.'+field);
-                    control_group.addClass('error');
-                    control_group.find('div.controls').append(template({'error': value}));
-                }
+        var template = _.template('<div class="alert  alert-error"> <strong>oops!</strong>  <%= error %></div>');
+        var control_group = null;
+        var render_errors = function(value, field){
+            console.log('for render');
+            console.log(value);
+            console.log(field);
+            if (field == '__all__'){
+                control_group = el.find('ul');
+                control_group.prepend(template({'error': value[0]}));
+                control_group.find('li').addClass('error');
+            }else{
+                control_group = el.find('li.'+field);
+                console.log(control_group);
+                control_group.addClass('error');
+                control_group.find('div.controls').append(template({'error': value}));
             }
-             $('div.alert-error').remove();
-             _.each(options.errors, render_errors);
-        };
+        }
+         $('div.alert-error').remove();
+         _.each(options.errors, render_errors);
+    };
 
     var _get_file_ext = function(fileName){
         var ext = fileName.substr(fileName.lastIndexOf('.')), arr_str=[];
@@ -64,7 +68,12 @@ notempo.utils = (function(){
         $("input", form).each(function() {
             var input = $(this);
             if (!input.hasClass("ignore") && 'submit' != input.attr('type')) {
-                data[input.attr('name')] = input.val();
+                if(input.attr('name') == 'id'){
+                    if(input.val()!= '')
+                    data[input.attr('name')] = input.val();
+                }else{
+                    data[input.attr('name')] = input.val();
+                }
             }
         });
 	    $("textarea", form).each(function() {
@@ -89,6 +98,11 @@ notempo.utils = (function(){
             options.error(error_params);
     };
 
+    var _show_msg = function(el, msg, options){
+        var msg_template = _.template('<div class="alert alert-<%= type %>"><%= msg %></div>');
+        el.prepend(msg_template({'type': options.type, 'msg': msg}));
+    };
+
     return {
         get_file_version: function(name, version){
             return _get_file_version(name, version);
@@ -108,11 +122,30 @@ notempo.utils = (function(){
         },
 
         render_validation_errors: function(el, options){
+            console.log(el);
+            console.log(options);
             if(el == undefined) return false;
             if(options == undefined) return false;
             if(options.model == undefined) return false;
             if(options.error == undefined) return false;
             _render_validation_errors(el, options);
+        },
+
+        element_exists: function(element_name){
+            if($(element_name).length == 0){
+                return false;
+            }else{
+                return true;
+            }
+        },
+
+        show_msg: function(el, msg, options){
+            if(el == undefined) return false;
+            if(msg == undefined) return false;
+            if(options == undefined) options = {};
+            if(options.type_msg == undefined) options.type = 'success';
+            _show_msg(el, msg, options)
+
         }
     };
 
@@ -131,7 +164,6 @@ notempo.modernizr = (function(){
 	    }
     }
 })();
-
 
 Backbone.sync = function(method, model, options) {
     var methodMap = {
