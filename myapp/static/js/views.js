@@ -85,31 +85,36 @@ var PostListView = Backbone.View.extend({
     },
 
     list : function(page){
-       this.models.fetch({data: {page: page}});
-       this.render();
+       var current_view = this;
+       if(page == undefined) page = 1;
+       this.models.fetch({data: {page: page}, success: function(){current_view.render();}});
+    },
+
+    get_post_list_template: function(){
+        var str_template = ['<tr>',
+                            '<td><%= title %></td>',
+                            '<td><%= slug %></td>',
+                            '<td><%= content %></td>',
+                            '<td><%= status %></td>',
+                            '<td>',
+                            '<a class="btn btn-success" href="#">',
+                            '<i class="icon-white icon-edit"></i>edit</a></td>',
+                            '</tr>']
+        var template = _.template(str_template.join(''));
+        var post_list = '';
+        var build_records = function(obj){
+             if(!_.isEmpty(obj.attributes))
+             post_list += template(obj.attributes);
+            }
+        _.each(this.models.models, build_records);
+        return post_list;
     },
 
     render: function(params){
         if(notempo.utils.element_exists('#post-list')){
 
-            var str_template = ['<tr>',
-                                '<td><%= title %></td>',
-                                '<td><%= slug %></td>',
-                                '<td><%= content %></td>',
-                                '<td><%= status %></td>',
-                                '<td>',
-                                '<a class="btn btn-success" href="#">',
-                                '<i class="icon-white icon-edit"></i>edit</a></td>',
-                                '</tr>']
-            var template = _.template(str_template.join(''));
-            var post_list = '';
-            var build_records = function(obj){
-                 if(!_.isEmpty(obj.attributes))
-                 post_list += template(obj.attributes);
-                }
-            _.each(this.models.models, build_records);
 
-           this.$el.find('tbody').empty().html(post_list);
+           this.$el.find('tbody').empty().html(this.get_post_list_template());
         }else{
             this.make_list();
         }
@@ -121,8 +126,12 @@ var PostListView = Backbone.View.extend({
 
     make_list: function(){
         if(!notempo.utils.element_exists('#post-list')){
-            this.models.fetch();
-            $('#article-container').append(this.$el);
+            var current_view = this;
+            var success = function(){
+                current_view.$el.find('tbody').empty().html(current_view.get_post_list_template());
+                $('#article-container').append(current_view.$el);
+            };
+            this.models.fetch({data: {page: 1}, success: success});
         }
     }
 });
@@ -217,13 +226,11 @@ var PostView = Backbone.View.extend({
 
             var success = function(model, response){
                 if(response.errors != undefined){
-                    console.log(response.errors);
                     var params = {'errors': response.errors};
                     current_view.render(params);
                 }else{
                     if(response.ok != undefined){
                         notempo.utils.show_msg(current_view.$el, response.ok.msg);
-                        console.log(response.ok);
                         current_view.model.clear();
                         current_view.model.set(response.ok.obj);
                         current_view.render_model();

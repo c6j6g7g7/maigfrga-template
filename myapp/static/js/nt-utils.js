@@ -24,16 +24,12 @@ notempo.utils = (function(){
         var template = _.template('<div class="alert  alert-error"> <strong>oops!</strong>  <%= error %></div>');
         var control_group = null;
         var render_errors = function(value, field){
-            console.log('for render');
-            console.log(value);
-            console.log(field);
             if (field == '__all__'){
                 control_group = el.find('ul');
                 control_group.prepend(template({'error': value[0]}));
                 control_group.find('li').addClass('error');
             }else{
                 control_group = el.find('li.'+field);
-                console.log(control_group);
                 control_group.addClass('error');
                 control_group.find('div.controls').append(template({'error': value}));
             }
@@ -122,8 +118,6 @@ notempo.utils = (function(){
         },
 
         render_validation_errors: function(el, options){
-            console.log(el);
-            console.log(options);
             if(el == undefined) return false;
             if(options == undefined) return false;
             if(options.model == undefined) return false;
