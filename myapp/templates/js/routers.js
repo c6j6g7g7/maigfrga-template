@@ -11,9 +11,10 @@ var PostRouter = Backbone.Router.extend({
     },
 
     routes: {
+        //':post_id': 'edit',
         'p:page': 'list',
         'add': 'add',
-        'get': 'get',
+        ':id': 'get',
         'save': 'save',
         '*actions': 'make_list' // Backbone will try match the route above first
     },
@@ -36,7 +37,15 @@ var PostRouter = Backbone.Router.extend({
     },
 
     get: function(id) {
-        // Note the variable in the route definition being passed in here
+        var modelPost = new Post();
+        this.postView = new PostView({model:modelPost});
+        var router = this;
+        var success = function(){
+            router.postView.renderForm(router.postListView);
+
+        };
+        this.postView.model.url = '/post/' + id;
+        this.postView.model.fetch({success: success});
     },
 
     save: function(){
