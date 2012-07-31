@@ -227,7 +227,7 @@ class PostView(BaseView):
         if 'id' in kwargs:
             try:
                 context['obj'] = PostModel.objects.get(id=kwargs.get('id'))
-                context['form'] = PostForm(initial={'title': context['obj'].title,
+                context['form'] = PostForm(initial={'id': context['obj'].id,'title': context['obj'].title,
                                                     'content': context['obj'].content,
                                                     'slug': context['obj'].slug})
             except PostModel.DoesNotExist:
@@ -275,7 +275,7 @@ class PostView(BaseView):
                 obj_dict ={'ok': {'obj': {'id': obj.id, 'slug': obj.slug,
                                           'title': obj.title, 'content': obj.content,
                                           'create_datetime': str(obj.create_datetime)},
-                                  'msg': _('post created successfully :)')
+                                  'msg': _('post updated successfully :)')
                                           }}
                 return self.json_to_response(obj=obj_dict)
             else:

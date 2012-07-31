@@ -44,7 +44,7 @@ var PostRouter = Backbone.Router.extend({
             router.postView.renderForm(router.postListView);
 
         };
-        this.postView.model.url = '/post/' + id;
+        this.postView.model.url = '/post/' + id + '/';
         this.postView.model.fetch({success: success});
     },
 

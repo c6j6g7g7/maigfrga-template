@@ -97,7 +97,7 @@ var PostListView = Backbone.View.extend({
                             '<td><%= content %></td>',
                             '<td><%= status %></td>',
                             '<td>',
-                            '<a class="btn btn-success" href="#">',
+                            '<a class="btn btn-success" href="#<%= id %>">',
                             '<i class="icon-white icon-edit"></i>edit</a></td>',
                             '</tr>']
         var template = _.template(str_template.join(''));
@@ -196,9 +196,10 @@ var PostView = Backbone.View.extend({
                             '<p><%= slug %></p>',
                             '<p><%= content %></p>',
                             '<p><a class="btn btn-success btn-large span2">edit</a>',
-                            '<a class="btn btn-success btn-large span2" href="#list">go to list</a></p>',
+                            '<a class="btn btn-success btn-large span2" href="#">go to list</a></p>',
                             '</div>']
         var template = _.template(str_template.join(''));
+        //var template_controls =
         if(notempo.utils.element_exists('#post-form')){
             this.$('#post-form').hide();
             this.$el.append(template(this.model.attributes));

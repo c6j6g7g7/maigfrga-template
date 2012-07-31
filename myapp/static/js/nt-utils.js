@@ -1,8 +1,3 @@
-var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
-$(document).ajaxSend(function(e, xhr, settings) {
-    xhr.setRequestHeader('X-CSRFToken', csrfToken);
-});
-
 var notempo= notempo||{};
 notempo.namespace=function(ns_string){
     var parts=ns_string.split('.'),
@@ -167,6 +162,7 @@ Backbone.sync = function(method, model, options) {
         'read':   'GET'
      };
 
+
     var type = methodMap[method];
     // Default options, unless specified.
     options || ( options = {});
@@ -181,6 +177,15 @@ Backbone.sync = function(method, model, options) {
     // Ensure that we have a URL.
     if (!options.url) {
        params.url = model.url || urlError();
+    }
+
+    if (type != 'GET') {
+        var csrfToken = $('input[name=csrfmiddlewaretoken]').val();
+        $(document).ajaxSend(function(e, xhr, settings) {
+            xhr.setRequestHeader('X-CSRFToken', csrfToken);
+        });
+
+        if(type != 'POST') params.url += model.get('id') + '/';
     }
     params.data = model.toJSON();
     return $.ajax(_.extend(params, options));
