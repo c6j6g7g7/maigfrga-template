@@ -152,13 +152,26 @@ var PostView = Backbone.View.extend({
     },
 
     events: {
-        'click #savePostBtn': 'savePost'
+        'click #savePostBtn': 'savePost',
+        'click #edit-post-btn': 'editPost'
+    },
+
+    editPost: function(){
+        var current_view = this;
+        var success = function(model, response){
+            if(response.template_string != undefined){
+                current_view.remove();
+                current_view.make_view(response.template_string);
+            }
+        };
+         var url = '/post/' + this.model.get('id') + '/';
+         this.model.fetch({success: success, url: url});
     },
 
     make_view: function(template_string){
         this.el = this.make('div', {'id': 'post-container', 'class': 'span4 offset3'});
         this.$el = $(this.el);
-        $(this.el).append(template_string);
+        $(this.el).empty().append(template_string);
         $('#article-container').append(this.el);
         this.delegateEvents(this.events);
     },
@@ -169,7 +182,6 @@ var PostView = Backbone.View.extend({
             if(response.template_string != undefined){
                 oldView.remove();
                 current_view.make_view(response.template_string);
-                //current_view.model = new Post;
             }
         };
          this.model.fetch({success: success});
@@ -195,16 +207,21 @@ var PostView = Backbone.View.extend({
                             '<h2><%= title %></h2>',
                             '<p><%= slug %></p>',
                             '<p><%= content %></p>',
-                            '<p><a class="btn btn-success btn-large span2">edit</a>',
-                            '<a class="btn btn-success btn-large span2" href="#">go to list</a></p>',
                             '</div>']
         var template = _.template(str_template.join(''));
-        //var template_controls =
+        var str_template_controls = ['<div id="post-detail" class="row">',
+                                 '<p><a id="edit-post-btn" href="#<%= action %>" class="btn btn-success btn-large span2">edit</a>',
+                                 '<a class="btn btn-success btn-large span2" href="#">go to list</a></p>',
+                                 '</div>'
+                                ];
+        var action = this.model.get('id') ? this.model.get('id') : '';
+        var template_controls = _.template(str_template_controls.join(''));
         if(notempo.utils.element_exists('#post-form')){
-            this.$('#post-form').hide();
+            this.$('#post-form').remove();
             this.$el.append(template(this.model.attributes));
+            this.$el.append(template_controls({'action': action}))
         }
-
+        this.delegateEvents(this.events);
     },
 
     savePost: function(e){
