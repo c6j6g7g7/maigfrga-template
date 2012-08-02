@@ -81,9 +81,21 @@ var PostListView = Backbone.View.extend({
     },
 
     events: {
-        'click #post-listd div.pagination ul li a': 'list'
+        'click #post-listd div.pagination ul li a': 'list',
+        'click a[id^="delete"]': 'destroy_post'
     },
 
+    destroy_post: function(e){
+        e.preventDefault();
+        var id = this.$(e.currentTarget).attr('id').split('-')[1];
+        var model = this.models.get(id);
+        var current_view = this;
+        var success = function(response){
+            current_view.models.remove(model);
+            current_view.render();
+        };
+        model.destroy({success:success});
+    },
     list : function(page){
        var current_view = this;
        if(page == undefined) page = 1;
@@ -98,7 +110,10 @@ var PostListView = Backbone.View.extend({
                             '<td><%= status %></td>',
                             '<td>',
                             '<a class="btn btn-success" href="#<%= id %>">',
-                            '<i class="icon-white icon-edit"></i>edit</a></td>',
+                            '<i class="icon-white icon-edit"></i>edit</a>',
+                            '<a id="delete-<%= id %>" class="btn btn-danger">',
+                            '<i class="icon-white icon-trash"></i> delete </a>',
+                            '</td>',
                             '</tr>']
         var template = _.template(str_template.join(''));
         var post_list = '';

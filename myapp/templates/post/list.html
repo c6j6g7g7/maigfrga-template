@@ -39,7 +39,10 @@
                             <i class="icon-white icon-edit"></i>
                             {% trans "edit" %}
                         </a>
-
+                        <a id="delete-{{post.id}}" class="btn btn-danger" >
+                            <i class="icon-white icon-trash"></i>
+                            {% trans "delete" %}
+                        </a>
                     </td>
                     </tr>
             {% endfor %}
@@ -47,6 +50,7 @@
         </table>
         {% numerated_pagination %}
     </div>
+{% csrf_token %}
 {% endblock %}
 
 {% block page_script %}
