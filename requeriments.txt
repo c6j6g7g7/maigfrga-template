@@ -1,0 +1,5 @@
+-e git+https://github.com/django/django.git@8ba78a0daf037b93194ccd1eb84614d72c7482a9#egg=Django-dev
+argparse==1.2.1
+wsgiref==0.1.2
+selenium
+-e git+https://github.com/dragoon/django-selenium.git#egg=Django-selenium
